@@ -1,4 +1,8 @@
+/**
+ * gcc -I$DPDK_HOME/include -shared -fPIC -o fuse-raw-encap.so fuse-raw-encap.c
+*/
 #include <rte_flow.h>
+#include <rte_testpmd_fusion.h>
 
 /**
  * @brief 
@@ -11,9 +15,9 @@
  * set raw_encap 4 eth src is 11:22:33:44:55:66 dst is aa:bb:cc:dd:04:aa / vlan vid is 4 / ipv6 src is fc00::31 dst is fc00::4 / udp src is 4 / vxlan vni is 4 / end_set
  * # total data size is 74
  */
-#define VOLUMES_NUM 4
+#define UNITS_NUM 4
 
-static struct rte_flow_action template_vxlan_encap_actions[VOLUMES_NUM][4] = {
+static struct rte_flow_action template_vxlan_encap_actions[UNITS_NUM][4] = {
 	{
 		{
 			.type = RTE_FLOW_ACTION_TYPE_RAW_ENCAP,
@@ -54,10 +58,7 @@ static struct rte_flow_action masks[] = {
 	{.type = RTE_FLOW_ACTION_TYPE_END}
 };
 
-struct actions_template_fuse_volume {
-	struct rte_flow_actions_template_attr *attr;
-	struct rte_flow_action *actions, *masks;
-} volumes_actions_templates[VOLUMES_NUM] = {
+struct fuse_unit_actions_template actions_templates_units[UNITS_NUM] = {
 	{.actions = template_vxlan_encap_actions[0], .masks = masks},
 	{.actions = template_vxlan_encap_actions[1], .masks = masks},
 	{.actions = template_vxlan_encap_actions[2], .masks = masks},
